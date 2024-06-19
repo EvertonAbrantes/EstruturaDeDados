@@ -1,0 +1,72 @@
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
+
+public class SetePontesKonigsberg {
+
+    static class Grafo {
+        Map<Character, List<Character>> adjacencia;
+
+        public Grafo() {
+            adjacencia = new HashMap<>();
+        }
+
+        public void adicionarAresta(char origem, char destino) {
+            adjacencia.putIfAbsent(origem, new ArrayList<>());
+            adjacencia.putIfAbsent(destino, new ArrayList<>());
+            adjacencia.get(origem).add(destino);
+            adjacencia.get(destino).add(origem);
+        }
+
+        public void resolverProblema() {
+            List<Character> caminho = new ArrayList<>();
+            encontrarCaminho('A', caminho);
+
+            System.out.println("Caminho percorrido:");
+            for (char bairro : caminho) {
+                System.out.print(bairro + " -> ");
+            }
+            System.out.println();
+
+            System.out.println("Matriz de adjacencia:");
+            for (char origem : adjacencia.keySet()) {
+                List<Character> destinos = adjacencia.get(origem);
+                for (char destino : adjacencia.keySet()) {
+                    if (destinos.contains(destino)) {
+                        System.out.print("1 ");
+                    } else {
+                        System.out.print("0 ");
+                    }
+                }
+                System.out.println();
+            }
+
+            System.out.println("Quantidade total de passos: " + (caminho.size() - 1));
+        }
+
+        private void encontrarCaminho(char atual, List<Character> caminho) {
+            caminho.add(atual);
+            List<Character> destinos = new ArrayList<>(adjacencia.get(atual)); // Copiar a lista de destinos
+            for (char proximo : destinos) {
+                adjacencia.get(atual).remove((Character) proximo);
+                adjacencia.get(proximo).remove((Character) atual);
+                encontrarCaminho(proximo, caminho);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Grafo grafo = new Grafo();
+
+        grafo.adicionarAresta('A', 'B');
+        grafo.adicionarAresta('A', 'C');
+        grafo.adicionarAresta('B', 'C');
+        grafo.adicionarAresta('B', 'D');
+        grafo.adicionarAresta('C', 'D');
+        grafo.adicionarAresta('C', 'E');
+        grafo.adicionarAresta('D', 'E');
+
+        grafo.resolverProblema();
+}
+}
